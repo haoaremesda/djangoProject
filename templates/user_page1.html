@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'js/layuiadmin/layui/css/layui.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'js/layuiadmin/style/admin.css' %}" media="all">
+    <title>Title</title>
+</head>
+<body>
+<button type="button" class="layui-btn"
+        style="margin-top:20px;margin-left:30px;" id="demoReload">搜索
+</button>
+<div style="width: 200px;">
+    玩家：
+    <input id="play_user" class="layui-input layui-disabled" disabled required lay-verify="required">
+    {#    <input id="play_user_id" type="hidden">#}
+    ID：
+    <input id="play_user_id" class="layui-input layui-disabled" lay-verify="required">
+</div>
+<div id="show_user_div" style="display:none">
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+    <button type="button" class="layui-btn"
+            style="margin-top:20px;margin-left:30px;" id="agree_button">确认
+    </button>
+    <button type="button" class="layui-btn layui-btn-primary"
+            style="margin-top:20px;margin-left:30px;" id="cancel_button">取消选中
+    </button>
+</div>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+    </div>
+</script>
+
+<script type="text/html" id="toolbar_query_user">
+    <select name="city" lay-ignore style="float:left;height:30px;" class="" id="select_value_user">
+        <option value="">请选择字段</option>
+        <option value="user_id__contains">玩家名</option>
+    </select>
+    <input type="text" id="select_data_user" style="width:200px;float:left;height:30px;" placeholder="选择字段查询 ..."
+           autocomplete="off"
+           class="layui-input">
+    <div class="layui-inline" style="float:left;height:29px;" title="搜索" lay-event="LAYTABLE_SEARCH">
+        <i class="layui-icon layui-icon-search" lay-event="search"></i></div>
+
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type='text/javascript' src="{% static 'js/layuiadmin/layui/layui.js' %}?v=20200129001"></script>
+<script type='text/javascript' src="{% static 'user_page1.js' %}?v=20200129001"></script>
+<script type='text/javascript' src="{% static 'js/xm-select.js' %}?v=20200129001"></script>
+</body>
+</html>
+
