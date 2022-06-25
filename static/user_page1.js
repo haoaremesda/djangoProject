@@ -4,6 +4,7 @@ layui.use(['table', 'jquery'], function () {
     var max_check_num = 10;
     var quanju = new Array();//全局
     var huancun = new Array();//缓存
+    var arr_name = new Array()//选中的名称
 
     function show_user() {
         table.render({
@@ -55,7 +56,6 @@ layui.use(['table', 'jquery'], function () {
 
     //触发事件
     table.on('toolbar(test)', function (obj) {
-        var checkStatus = table.checkStatus(obj.config.id);
         switch (obj.event) {
             case 'search':
                 let select_value = $("#select_value_user").val();
@@ -76,23 +76,27 @@ layui.use(['table', 'jquery'], function () {
     });
 
     $('#agree_button').on('click', () => {
-        var checkStatus = table.checkStatus("test");
-        var data = checkStatus.data;
         if (huancun.length > 10) {
             layer.msg('你选中了：' + huancun.length + ' 个，超过最大可选数 ' + max_check_num + ' 个');
-        } else if (data.length <= 0) {
+        } else if (huancun.length <= 0) {
             layer.msg('请选中需要封停的玩家');
         } else {
-            var rname_arr = [], id_arr = [];
-            data.forEach((k) => {
-                rname_arr.push(k.user_id);
-                id_arr.push(k.id);
-            })
-            $("#play_user").val(rname_arr.join(","))
-            $("#play_user_id").val(id_arr.join("|"))
+            // var rname_arr = [], id_arr = [];
+            // data.forEach((k, index) => {
+            //     rname_arr.push(k.user_id);
+            //     id_arr.push(k.id);
+            // })
+            // $("#play_user").val(rname_arr.join(","))
+            // $("#play_user_id").val(id_arr.join("|"))
+            $("#play_user").val(arr_name.join(","))
+            $("#play_user_id").val(huancun.join("|"))
         }
     })
     $('#cancel_button').on('click', () => {
+        if (huancun.length <= 0) {
+            layer.msg('你暂未选中任何玩家！');
+            return
+        }
         huancun.length = 0
         layui.each(layui.table.cache["test"], function (i, item) {
             if (item.LAY_CHECKED) {
@@ -109,9 +113,11 @@ layui.use(['table', 'jquery'], function () {
         if (obj.checked == true) {
             if (obj.type == 'one') {
                 huancun.push(obj.data.id);
+                arr_name.push(obj.data.user_id);
             } else {
                 for (var i = 0; i < quanju.length; i++) {
                     huancun.push(quanju[i].id);
+                    arr_name.push(quanju[i].user_id);
                 }
             }
         } else {
@@ -119,6 +125,7 @@ layui.use(['table', 'jquery'], function () {
                 for (var i = 0; i < huancun.length; i++) {
                     if (huancun[i] == obj.data.id) {
                         removeByValue(huancun, huancun[i]);//调用自定义的根据值移除函数
+                        removeByValue(arr_name, arr_name[i])
                     }
                 }
             } else {
@@ -126,6 +133,7 @@ layui.use(['table', 'jquery'], function () {
                     for (var j = 0; j < quanju.length; j++) {
                         if (huancun[i] == quanju[j].id) {
                             removeByValue(huancun, +huancun[i]);//调用自定义的根据值移除函数
+                            removeByValue(arr_name, +arr_name[i]);//调用自定义的根据值移除函数
                         }
                     }
                 }

@@ -1,9 +1,11 @@
+import json
 import time
 
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 from test_app_02.models import *
+from django.core import serializers
 
 
 class MyView(View):
@@ -23,9 +25,9 @@ def test(request):
 
 def test1(request):
     start_time = time.time()
-    books = Book.objects.all()[: 3].select_related("publisher")
-    for book in books:
-        print(book.name, book.publisher.name)
+    authors = Author.objects.all()[: 5]
+    # data = serializers.serialize("json", books)
     end_time = time.time()
     print(f"test1本次查询花费时长：{end_time-start_time}")
-    return JsonResponse({})
+    # return JsonResponse({"books": json.loads(data)})
+    return render(request, "books.html", {"data": authors})

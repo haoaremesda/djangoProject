@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.forms.models import model_to_dict
 from django.core import serializers
 from test_app_01.models import User
+from django.db.models import Sum
 
 
 def home(request):
@@ -37,18 +38,19 @@ def user_json(request):
         print("q")
     all_count = User.objects.filter(**contain).all()
     start_time = time.time()
-    cache_key = f"user_count&{contains}"
-    count = cache.get(cache_key)
-    if not count:
-        count = User.objects.filter(**contain).count()
-        cache.set(cache_key, count, nx=False, timeout=1 * 60)
-        print("user_json写入数据总数")
-
-    end_time = time.time()
-    print(f"user_json查询数据总数花费时长：{end_time - start_time} 秒")
+    # cache_key = f"user_count&{contains}"
+    # count = cache.get(cache_key)
+    # if not count:
+    #     count = User.objects.filter(**contain).count()
+    #     cache.set(cache_key, count, nx=False, timeout=1 * 60)
+    #     print("user_json写入数据总数")
+    # count = User.objects.filter(**contain).count()
+    count = all_count.count()
     paginator = Paginator(all_count, limit)
     page_1 = paginator.get_page(page)
     data_list = [model_to_dict(i) for i in page_1]
+    end_time = time.time()
+    print(f"user_json查询数据总数花费时长：{end_time - start_time} 秒")
     data = {'code': 0, "msg": '操作成功', "data": data_list, 'count': count}
     # data = {'code': 0, "msg": '操作成功', "data": data_list, 'count': paginator.count}
     return JsonResponse(data)
@@ -76,3 +78,10 @@ def user_json1(request):
     data = {'code': 0, "msg": '操作成功', "data": data_list, 'count': count}
     # data = {'code': 0, "msg": '操作成功', "data": data_list, 'count': paginator.count}
     return JsonResponse(data)
+
+
+def user_page2(request):
+    user = User.objects.all()[0: 10]
+    # user = User.objects.all()
+    # user = serializers.serialize('json', user)
+    return render(request, 'user_page2.html', {"datas": user})

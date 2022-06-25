@@ -6,6 +6,7 @@ urlpatterns = [
     path('hello/', views.home),
     path('user_page/', views.user_page),
     path('user_page1/', views.user_page1),
+    path('user_page2/', views.user_page2),
     path('user.json/', views.user_json),
     path('user.json1/', views.user_json1),
 ]

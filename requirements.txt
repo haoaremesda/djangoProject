@@ -7,9 +7,9 @@ django-redis==5.2.0
 greenlet==1.1.2
 jmespath==1.0.1
 mysqlclient==2.1.0
-numpy==1.23.0
+numpy
 packaging==21.3
-pandas==1.4.2
+pandas
 psycopg2-binary==2.9.3
 py-dbutils==0.4.28
 pyinstrument==4.1.1
