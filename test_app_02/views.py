@@ -54,3 +54,13 @@ def test2(request):
     print(f"test1本次查询花费时长：{end_time - start_time}")
     # return JsonResponse({"books": json.loads(data)})
     return JsonResponse({"data": publisher_data})
+
+
+def test3(request):
+    start_time = time.time()
+    authors = Author.objects.filter(id=98).prefetch_related(*["city", "book_set"])
+    author_data = PublisherSerializer(authors, many=True).data
+    end_time = time.time()
+    print(f"test1本次查询花费时长：{end_time - start_time}")
+    # return JsonResponse({"books": json.loads(data)})
+    return JsonResponse({"data": author_data})

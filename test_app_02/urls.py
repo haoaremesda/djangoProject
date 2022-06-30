@@ -7,4 +7,5 @@ urlpatterns = [
     path('books/', test),
     path('test1/', test1),
     path('publishers/', test2),
+    path('authors/', test3),
 ]

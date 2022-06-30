@@ -9,11 +9,13 @@ class CitySerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    city = CitySerializer()
+    # city = CitySerializer()
 
     class Meta:
         model = Author
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ["id", "name", "age", "city", "book_set"]
+        # depth = 1
 
 
 class PublisherSerializer(serializers.ModelSerializer):
@@ -26,8 +28,8 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer(many=True)
-    publisher = PublisherSerializer()
+    # author = AuthorSerializer(many=True)
+    # publisher = PublisherSerializer()
 
     class Meta:
         model = Book
