@@ -8,8 +8,8 @@ from django.shortcuts import render
 from django.views import View
 from test_app_02.models import *
 from django.core import serializers
-
-from test_app_02.serializers import BookSerializer, PublisherSerializer
+from rest_framework.decorators import api_view
+from test_app_02.serializers import BookSerializer, PublisherSerializer, AuthorSerializer
 
 
 class MyView(View):
@@ -43,7 +43,8 @@ def test1(request):
     end_time = time.time()
     print(f"test1本次查询花费时长：{end_time - start_time}")
     # return JsonResponse({"books": json.loads(data)})
-    return JsonResponse({"data": publisher_data})
+    # return JsonResponse({"data": publisher_data})
+    return JsonResponse(publisher_data, safe=False)
 
 
 def test2(request):
@@ -51,16 +52,53 @@ def test2(request):
     publishers = Publisher.objects.filter(name="Raymond Olson").prefetch_related(*["book_set", "book_set__author"])
     publisher_data = PublisherSerializer(publishers, many=True).data
     end_time = time.time()
-    print(f"test1本次查询花费时长：{end_time - start_time}")
+    print(f"test2本次查询花费时长：{end_time - start_time}")
     # return JsonResponse({"books": json.loads(data)})
     return JsonResponse({"data": publisher_data})
 
 
+@api_view(["get"])
 def test3(request):
     start_time = time.time()
-    authors = Author.objects.filter(id=98).prefetch_related(*["city", "book_set"])
-    author_data = PublisherSerializer(authors, many=True).data
+    authors = Author.objects.filter(id=88).prefetch_related(*["city", "book_set", "book_set__author"])
+    author_data = AuthorSerializer(authors, many=True).data
     end_time = time.time()
-    print(f"test1本次查询花费时长：{end_time - start_time}")
+    print(f"test3本次查询花费时长：{end_time - start_time}")
     # return JsonResponse({"books": json.loads(data)})
     return JsonResponse({"data": author_data})
+
+
+@api_view(["post"])
+def add_authors(request):
+    from rest_framework.response import Response
+    start_time = time.time()
+    post_data = request.data
+    author = Author.objects.filter(name=post_data["name"]).first()
+    if author:
+        return Response(AuthorSerializer(author).data)
+    city = City.objects.filter(id=post_data["city"]).first()
+    serializer = AuthorSerializer(data=post_data, context={"city": city})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    end_time = time.time()
+    print(f"test1本次查询花费时长：{end_time - start_time}")
+    return Response(serializer.errors)
+    # return JsonResponse({"data": author_data})
+
+
+@api_view(["post"])
+def add_book(request):
+    from rest_framework.response import Response
+    start_time = time.time()
+    post_data = request.data
+    book = Book.objects.filter(**{"name": post_data["name"], "publisher_id": post_data["publisher_idx"]}).first()
+    if book:
+        return Response(BookSerializer(book).data)
+    serializer = BookSerializer(data=post_data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    end_time = time.time()
+    print(f"test1本次查询花费时长：{end_time - start_time}")
+    return Response(serializer.errors)
